@@ -1,10 +1,39 @@
 .navbar {
-  background-color: #1a1a1a;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 1rem 3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.brand-logo {
+  background-color: #ff8c42;
+  color: white;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.brand-name {
+  color: #1a1a1a;
 }
 
 .Nav-links {
@@ -12,9 +41,9 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 2rem;
+  gap: 2.5rem;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 .Nav-links li {
@@ -23,7 +52,7 @@
 
 .Nav-links a {
   text-decoration: none;
-  color: #ffffff;
+  color: #666;
   font-size: 1rem;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -32,47 +61,95 @@
 }
 
 .Nav-links a:hover {
-  color: #4a90e2;
+  color: #ff8c42;
 }
 
-.Nav-links button {
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 4px;
+.signin-btn {
+  padding: 0.6rem 1.5rem;
+  border: 2px solid #ddd;
+  background-color: transparent;
+  border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  background-color: #4a90e2;
+  color: #1a1a1a;
+}
+
+.signin-btn:hover {
+  border-color: #ff8c42;
+  color: #ff8c42;
+}
+
+.getstarted-btn {
+  padding: 0.6rem 1.5rem;
+  border: none;
+  background-color: #ff8c42;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
   color: white;
 }
 
-.Nav-links button:hover {
-  background-color: #357abd;
+.getstarted-btn:hover {
+  background-color: #e67e2f;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
 }
 
-.Nav-links button:active {
+.getstarted-btn:active {
   transform: translateY(0);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
-    padding: 1rem;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.3rem;
+  }
+
+  .brand-logo {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
   }
 
   .Nav-links {
-    gap: 1rem;
+    gap: 1.5rem;
+    flex-wrap: wrap;
   }
 
   .Nav-links a {
     font-size: 0.9rem;
   }
 
-  .Nav-links button {
+  .signin-btn,
+  .getstarted-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
   }
 }
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .Nav-links {
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .brand-name {
+    display: none;
+  }
+}
+
