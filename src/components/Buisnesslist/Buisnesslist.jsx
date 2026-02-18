@@ -2,20 +2,47 @@ import React from 'react'
 import './Buisnesslist.css'
 
 // images need to be imported so that webpack/vite can bundle them
-import italianKitchen from '../../assets/Images/Italian kitchen.PNG'
+// note: filenames must match exactly what exists in the Images folder
+import italianKitchen from '../../assets/Images/Italiankitchen.PNG'
 import bookshopImage from '../../assets/Images/Bookshop.PNG'
-import zenSpa from '../../assets/Images/Saloon and spa.PNG'
+import zenSpa from '../../assets/Images/Saloonandspa.PNG'
+
+// additional images (filenames observed in directory):
+import cafeImage from '../../assets/Images/cafe.PNG'
+import gymImage from '../../assets/Images/gym.PNG'
+import petStoreImage from '../../assets/Images/Pet store.PNG'
+import cinemaImage from '../../assets/Images/Cinema.PNG'
+import floristImage from '../../assets/Images/Florist.PNG'
+import techImage from '../../assets/Images/Tech Store.PNG'
+// import other files as needed for any new categories
+
+// map categories to their representative image so it's easy to hook up new
+// images simply by editing this object
+const categoryImages = {
+  Restaurant: italianKitchen,
+  Bookstore: bookshopImage,
+  Salon: zenSpa,
+  Cafe: cafeImage,
+  Gym: gymImage,
+  'Pet Store': petStoreImage,
+  Entertainment: cinemaImage,
+  Florist: floristImage,
+  Electronics: techImage,
+  // when you add new categories/images, add them here
+}
 
 function Buisnesslist() {
   // state for filters
   const [selectedCategory, setSelectedCategory] = React.useState('All');
+  // state for sorting dropdown
+  const [sortBy, setSortBy] = React.useState('Top Rated');
 
   const businesses = [
     {
       id: 1,
       name: "Bella's Italian Kitchen",
       category: "Restaurant",
-      image: italianKitchen,
+      image: categoryImages['Restaurant'],
       rating: 4.9,
       reviews: 287,
       description: "Family-owned Italian restaurant serving authentic recipes passed down through generations. Handmade pasta....",
@@ -42,73 +69,118 @@ function Buisnesslist() {
       reviews: 203,
       description: "Full-service spa and salon offering relaxation treatments, haircare, and beauty services in a tranquil setting.",
       address: "987 Willow Way, Wellness Plaza",
-      deal: true
+      deal: true,
+      // add a date field for sorting 'newest'
+      createdAt: '2023-10-01'
     },
     {
       id: 4,
       name: "The Daily Grind Café",
       category: "Cafe",
-      image: italianKitchen,
+      image: categoryImages['Cafe'],
       rating: 4.5,
       reviews: 134,
       description: "Cozy coffee shop with artisanal drinks and homemade pastries.",
       address: "123 Maple Street, Downtown",
-      deal: false
+      deal: false,
+      createdAt: '2024-01-12'
     },
     {
       id: 5,
       name: "Cornerstone Fitness",
       category: "Gym",
-      image: bookshopImage,
+      image: categoryImages['Gym'],
       rating: 4.3,
       reviews: 76,
       description: "Modern gym with personal training and group classes.",
       address: "321 Fitness Ave, Uptown",
-      deal: true
+      deal: true,
+      createdAt: '2023-11-20'
     },
     {
       id: 6,
       name: "Pet Haven Boutique",
       category: "Pet Store",
-      image: zenSpa,
+      image: categoryImages['Pet Store'],
       rating: 4.7,
       reviews: 54,
       description: "All-natural pet food and accessories, plus grooming services.",
       address: "654 Paws Road, Suburbia",
-      deal: false
+      deal: false,
+      createdAt: '2024-02-05'
     },
     {
       id: 7,
       name: "Starlight Cinema",
       category: "Entertainment",
-      image: italianKitchen,
+      image: categoryImages['Entertainment'] || italianKitchen, // fallback if no specific image
       rating: 4.6,
       reviews: 210,
       description: "Independent movie theater showing classic and indie films.",
       address: "987 Film Blvd, Arts District",
-      deal: true
+      deal: true,
+      createdAt: '2023-09-15'
     },
     {
       id: 8,
       name: "Bloom & Grow Florist",
       category: "Florist",
-      image: bookshopImage,
+      image: categoryImages['Florist'] || bookshopImage,
       rating: 4.9,
       reviews: 122,
       description: "Fresh floral arrangements and plant care advice.",
       address: "258 Blossom Lane, Garden District",
-      deal: false
+      deal: false,
+      createdAt: '2024-02-10'
     },
     {
       id: 9,
       name: "Techie Toys",
       category: "Electronics",
-      image: zenSpa,
+      image: categoryImages['Electronics'] || zenSpa,
       rating: 4.4,
       reviews: 98,
       description: "Gadgets and gizmos for tech enthusiasts.",
       address: "147 Silicon Street, Tech Park",
-      deal: true
+      deal: true,
+      createdAt: '2023-12-01'
+    },
+    // additional sample businesses shown in screenshot
+    {
+      id: 10,
+      name: "Sunrise Bakery",
+      category: "Bakery",
+      image: categoryImages['Bakery'] || cafeImage,
+      rating: 4.7,
+      reviews: 64,
+      description: "Artisan breads and pastries baked fresh every morning.",
+      address: "159 Dough Lane, Market Square",
+      deal: false,
+      createdAt: '2024-02-12'
+    },
+    {
+      id: 11,
+      name: "Chic Boutique",
+      category: "Boutique",
+      image: categoryImages['Boutique'] || bookshopImage,
+      rating: 4.5,
+      reviews: 45,
+      description: "Curated fashion and home goods from local designers.",
+      address: "753 Fashion Ave, Uptown",
+      deal: false,
+      createdAt: '2024-01-18'
+    },
+    {
+      id: 12,
+      name: "Canvas & Colors Art Gallery",
+      category: "Art Gallery",
+      image: categoryImages['Art Gallery'] || zenSpa,
+      rating: 4.8,
+      reviews: 98,
+      description: "Contemporary art exhibitions and workshops.",
+      address: "321 Gallery Row, Arts District",
+      deal: true,
+      createdAt: '2024-02-14'
     }
   ]
 
@@ -120,9 +192,26 @@ function Buisnesslist() {
 
   // filter businesses according to selectedCategory
   const filtered = React.useMemo(() => {
-    if (selectedCategory === 'All') return businesses;
-    return businesses.filter(b => b.category === selectedCategory);
-  }, [selectedCategory, businesses]);
+    let list = businesses;
+    if (selectedCategory !== 'All') {
+      list = list.filter(b => b.category === selectedCategory);
+    }
+
+    // apply sort
+    switch (sortBy) {
+      case 'Most Reviewed':
+        list = [...list].sort((a, b) => b.reviews - a.reviews);
+        break;
+      case 'Newest':
+        list = [...list].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      case 'Top Rated':
+      default:
+        list = [...list].sort((a, b) => b.rating - a.rating);
+    }
+
+    return list;
+  }, [selectedCategory, sortBy, businesses]);
 
   const renderStars = (rating) => {
     return (
@@ -151,6 +240,13 @@ function Buisnesslist() {
                 {cat}
               </button>
             ))}
+          </div>
+          <div className="sort-dropdown">
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+              <option>Top Rated</option>
+              <option>Most Reviewed</option>
+              <option>Newest</option>
+            </select>
           </div>
         </div>
 
