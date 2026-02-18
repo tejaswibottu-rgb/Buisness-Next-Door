@@ -1,0 +1,18 @@
+/* layout helpers */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* flex column container to push footer down */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* main content grows to fill space */
+.main-content {
+  flex: 1;
+  padding-bottom: 1rem; /* avoid overlap with footer if fixed */
+}

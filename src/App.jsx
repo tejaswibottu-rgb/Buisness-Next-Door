@@ -5,16 +5,22 @@ import './App.css'
 import Navbar from './components/Navbar/Navbar.jsx'
 import Hero from './components/Hero/Hero.jsx'
 import Buisnesslist from './components/Buisnesslist/Buisnesslist.jsx'
+import Footer from './components/Footer/Footer.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <Navbar/>
-      <Hero/>
-      <Buisnesslist/>
-    </>
+    <div className="app-container">
+      <Navbar />
+
+      <main className="main-content">
+        <Hero />
+        <Buisnesslist />
+      </main>
+
+      <Footer />
+    </div>
   )
 }
 
