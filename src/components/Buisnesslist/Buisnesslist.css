@@ -245,6 +245,105 @@
   .list-header h2 {
     font-size: 1.25rem;
   }
+}
+
+/* business detail page */
+.business-detail-section {
+  padding: 3rem 2rem;
+  background-color: #f9f7f3;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #ff5722;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.business-detail-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.business-detail-card h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+}
+
+.business-phone,
+.business-website {
+  margin-top: 0.5rem;
+  color: #555;
+}
+
+.business-website a {
+  color: #ff5722;
+  text-decoration: none;
+}
+
+.reviews-section {
+  margin-top: 2rem;
+}
+
+.review-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 0.95rem;
+}
+
+.review-form button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.review-item {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.review-author {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.login-prompt {
+  background: #fff5e6;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.login-prompt button {
+  background: #ff5722;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
   .card-image-container {
     height: 200px;

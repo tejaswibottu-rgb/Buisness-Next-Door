@@ -28,6 +28,9 @@ const categoryImages = {
   Entertainment: cinemaImage,
   Florist: floristImage,
   Electronics: techImage,
+  Bakery: cafeImage,      // reuse cafe for now
+  Boutique: bookshopImage,
+  'Art Gallery': zenSpa,
   // when you add new categories/images, add them here
 }
 
@@ -47,6 +50,8 @@ function Buisnesslist() {
       reviews: 287,
       description: "Family-owned Italian restaurant serving authentic recipes passed down through generations. Handmade pasta....",
       address: "456 Oak Avenue, Midtown",
+      phone: "(555) 123-4567",
+      website: "https://bellaitaliankitchen.example.com",
       deal: false
     },
     {
@@ -225,6 +230,91 @@ function Buisnesslist() {
     )
   }
 
+  // authentication state (simple stub)
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [selectedBusiness, setSelectedBusiness] = React.useState(null);
+
+  // reviews storage keyed by business id
+  const [reviewsById, setReviewsById] = React.useState({});
+
+  const addReview = (bizId, review) => {
+    setReviewsById(prev => {
+      const existing = prev[bizId] || [];
+      return { ...prev, [bizId]: [...existing, review] };
+    });
+    // increment count in businesses array (mutable for simplicity)
+    const biz = businesses.find(b => b.id === bizId);
+    if (biz) biz.reviews += 1;
+  };
+
+  const handleCardClick = biz => {
+    setSelectedBusiness(biz);
+  };
+
+  const goBack = () => setSelectedBusiness(null);
+
+  // if a business is selected render its detail page
+  if (selectedBusiness) {
+    const biz = selectedBusiness;
+    const bizReviews = reviewsById[biz.id] || [];
+
+    return (
+      <section className="business-detail-section">
+        <button className="back-btn" onClick={goBack}>← Back</button>
+        <div className="business-detail-card">
+          <h2>{biz.name}</h2>
+          <div className="rating-section">
+            {renderStars(biz.rating)}
+            <span className="rating-number">{biz.rating}</span>
+            <span className="review-count">({biz.reviews} reviews)</span>
+          </div>
+          <p>{biz.description}</p>
+          <div className="business-address">
+            <span className="address-icon">📍</span>
+            <span>{biz.address}</span>
+          </div>
+          {biz.phone && <div className="business-phone">📞 {biz.phone}</div>}
+          {biz.website && (
+            <div className="business-website">
+              <a href={biz.website} target="_blank" rel="noreferrer">Visit Website</a>
+            </div>
+          )}
+
+          <div className="reviews-section">
+            <h3>Reviews ({bizReviews.length})</h3>
+            {!loggedIn && (
+              <div className="login-prompt">
+                <p>Sign in to leave a review</p>
+                <button onClick={() => setLoggedIn(true)}>Sign In</button>
+              </div>
+            )}
+            {loggedIn && (
+              <>
+                <div className="login-prompt">
+                  <p>You're signed in</p>
+                  <button onClick={() => setLoggedIn(false)}>Sign Out</button>
+                </div>
+                <ReviewForm
+                  onSubmit={text => {
+                    addReview(biz.id, { text, date: new Date().toISOString(), author: 'You' });
+                  }}
+                />
+              </>
+            )}
+            <ul className="review-list">
+              {bizReviews.map((r, idx) => (
+                <li key={idx} className="review-item">
+                  <div className="review-author">{r.author}</div>
+                  <div className="review-text">{r.text}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="business-list-section">
       <div className="business-list-container">
@@ -252,7 +342,7 @@ function Buisnesslist() {
 
         <div className="businesses-grid">
           {filtered.map((business) => (
-            <div key={business.id} className="business-card">
+<div key={business.id} className="business-card" onClick={() => handleCardClick(business)}>
               <div className="card-image-container">
                 <img src={business.image} alt={business.name} className="card-image" />
                 <span className="category-badge">{business.category}</span>
