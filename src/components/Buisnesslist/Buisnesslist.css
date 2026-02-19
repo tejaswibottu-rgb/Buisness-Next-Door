@@ -102,6 +102,19 @@
   font-weight: 600;
 }
 
+.discount-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #ff7043;
+  color: white;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+}
+
 .deal-badge {
   position: absolute;
   bottom: 12px;
@@ -336,6 +349,65 @@
   margin-bottom: 1rem;
 }
 
+/* auth section styles */
+.auth-section {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.auth-toggle button {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  margin-right: 0.25rem;
+  cursor: pointer;
+}
+
+.auth-toggle button.active {
+  background: #ff5722;
+  color: white;
+  border-color: #ff5722;
+}
+
+.auth-form-inner {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.auth-form-inner input {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.auth-form-inner button {
+  padding: 0.4rem 0.9rem;
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.auth-error {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.user-info button {
+  margin-left: 0.5rem;
+  background: none;
+  border: none;
+  color: #ff5722;
+  cursor: pointer;
+}
+
 .login-prompt button {
   background: #ff5722;
   color: white;
@@ -360,7 +432,6 @@
   .business-description {
     font-size: 0.9rem;
   }
-}
 
 @media (max-width: 480px) {
   .businesses-grid {
