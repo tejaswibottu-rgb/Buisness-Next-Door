@@ -232,60 +232,6 @@ function Buisnesslist() {
   }, []);
 
 
-  // authentication state
-  const [token, setToken] = React.useState(localStorage.getItem('token') || null);
-  const [username, setUsername] = React.useState(localStorage.getItem('username') || null);
-  const [authMode, setAuthMode] = React.useState('login'); // or 'register'
-  const [authError, setAuthError] = React.useState(null);
-
-  // if your backend runs on a different port (e.g. 5000) configure
-  // `VITE_API_BASE` in .env (used by Vite) so requests will go there.
-  const apiBase = import.meta.env.VITE_API_BASE || '';
-
-  const loginUser = async (user, pass) => {
-    try {
-      const res = await fetch(apiBase + '/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: user, password: pass })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'login failed');
-      setToken(data.token);
-      setUsername(data.username);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('username', data.username);
-      setAuthError(null);
-      return true;
-    } catch (err) {
-      setAuthError(err.message);
-      return false;
-    }
-  };
-
-  const registerUser = async (user, email, pass) => {
-    try {
-      const res = await fetch(apiBase + '/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: user, email, password: pass })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'registration failed');
-      // after registration, auto login
-      return await loginUser(user, pass);
-    } catch (err) {
-      setAuthError(err.message);
-      return false;
-    }
-  };
-
-  const logout = () => {
-    setToken(null);
-    setUsername(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-  };
 
   // derive category list from businesses
   const categories = React.useMemo(() => {
@@ -424,7 +370,7 @@ function Buisnesslist() {
             {!token && (
               <div className="login-prompt">
                 <p>Sign in to leave a review</p>
-                <button onClick={() => setAuthMode('login')}>Sign In</button>
+                <button onClick={() => onRequestAuth('login')}>Sign In</button>
               </div>
             )}
             {token && (
@@ -459,40 +405,6 @@ function Buisnesslist() {
       <div className="business-list-container">
         <div className="list-header">
           <h2>Showing {filtered.length} businesses</h2>
-          <div className="auth-section">
-            {token ? (
-              <div className="user-info">
-                Hi {username} <button onClick={logout}>Logout</button>
-              </div>
-            ) : (
-              <div className="auth-controls">
-                <div className="auth-toggle">
-                  <button
-                    className={authMode === 'login' ? 'active' : ''}
-                    onClick={() => setAuthMode('login')}
-                  >
-                    Login
-                  </button>
-                  <button
-                    className={authMode === 'register' ? 'active' : ''}
-                    onClick={() => setAuthMode('register')}
-                  >
-                    Register
-                  </button>
-                </div>
-                {authMode === 'login' ? (
-                  <LoginForm
-                    onSubmit={(u, p) => loginUser(u, p)}
-                  />
-                ) : (
-                  <RegisterForm
-                    onSubmit={(u, e, p) => registerUser(u, e, p)}
-                  />
-                )}
-                {authError && <div className="auth-error">{authError}</div>}
-              </div>
-            )}
-          </div>
           <div className="category-filter">
             {categories.map(cat => (
               <button
