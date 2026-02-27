@@ -26,7 +26,9 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: user, password: pass })
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
       if (!res.ok) throw new Error(data.error || 'login failed');
       setToken(data.token);
       setUsername(data.username);
@@ -48,7 +50,9 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: user, email, password: pass })
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (e) { data = {}; }
       if (!res.ok) throw new Error(data.error || 'registration failed');
       // after registration, auto login
       return await loginUser(user, pass);
