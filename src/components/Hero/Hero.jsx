@@ -1,7 +1,22 @@
 import React from 'react'
 import './Hero.css'
 
-function Hero() {
+function Hero({ onSearch }) {
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    if (onSearch) {
+      onSearch(e.target.value);
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (onSearch) {
+      onSearch(searchQuery);
+    }
+  };
+
   return (
     <section className="hero">
       <div className="hero-content">
@@ -20,8 +35,11 @@ function Hero() {
             type="text" 
             placeholder="Search businesses, categories..." 
             className="search-input"
+            value={searchQuery}
+            onChange={handleSearch}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearchClick()}
           />
-          <button className="search-btn">🔍</button>
+          <button className="search-btn" onClick={handleSearchClick}>🔍</button>
         </div>
       </div>
     </section>

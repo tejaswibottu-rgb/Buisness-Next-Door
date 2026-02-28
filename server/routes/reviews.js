@@ -20,12 +20,13 @@ const authMiddleware = (req, res, next) => {
 
 // post a review (authenticated)
 router.post('/', authMiddleware, async (req, res) => {
-  const { businessId, text } = req.body;
+  const { businessId, text, rating } = req.body;
   if (!businessId || !text) {
     return res.status(400).json({ error: 'Missing fields' });
   }
+  const validRating = rating && rating >= 1 && rating <= 5 ? rating : 5;
   try {
-    const review = new Review({ businessId, author: req.user.username, text });
+    const review = new Review({ businessId, author: req.user.username, text, rating: validRating });
     await review.save();
     res.json({ success: true, review });
   } catch (err) {

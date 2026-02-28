@@ -41,8 +41,8 @@ const initialBusinesses = [
       name: "Bella's Italian Kitchen",
       category: "Restaurant",
       image: categoryImages['Restaurant'],
-      rating: 4.9,
-      reviews: 287,
+      rating: 5.0,
+      reviews: 0,
       description: "Family-owned Italian restaurant serving authentic recipes passed down through generations. Handmade pasta....",
       address: "456 Oak Avenue, Midtown",
       phone: "(555) 123-4567",
@@ -55,8 +55,8 @@ const initialBusinesses = [
       name: "Pages & Prose Bookshop",
       category: "Bookstore",
       image: bookshopImage,
-      rating: 4.8,
-      reviews: 89,
+      rating: 5.0,
+      reviews: 0,
       description: "Independent bookstore with a curated selection of fiction, non-fiction, and rare finds. Regular author events and...",
       address: "789 Elm Street, Arts District",
       deal: true,
@@ -67,8 +67,8 @@ const initialBusinesses = [
       name: "Zen Garden Spa & Salon",
       category: "Salon",
       image: zenSpa,
-      rating: 4.8,
-      reviews: 203,
+      rating: 5.0,
+      reviews: 0,
       description: "Full-service spa and salon offering relaxation treatments, haircare, and beauty services in a tranquil setting.",
       address: "987 Willow Way, Wellness Plaza",
       deal: true,
@@ -81,8 +81,8 @@ const initialBusinesses = [
       name: "The Daily Grind Café",
       category: "Cafe",
       image: categoryImages['Cafe'],
-      rating: 4.5,
-      reviews: 134,
+      rating: 5.0,
+      reviews: 0,
       description: "Cozy coffee shop with artisanal drinks and homemade pastries.",
       address: "123 Maple Street, Downtown",
       deal: false,
@@ -94,8 +94,8 @@ const initialBusinesses = [
       name: "Cornerstone Fitness",
       category: "Gym",
       image: categoryImages['Gym'],
-      rating: 4.3,
-      reviews: 76,
+      rating: 5.0,
+      reviews: 0,
       description: "Modern gym with personal training and group classes.",
       address: "321 Fitness Ave, Uptown",
       deal: true,
@@ -107,8 +107,8 @@ const initialBusinesses = [
       name: "Pet Haven Boutique",
       category: "Pet Store",
       image: categoryImages['Pet Store'],
-      rating: 4.7,
-      reviews: 54,
+      rating: 5.0,
+      reviews: 0,
       description: "All-natural pet food and accessories, plus grooming services.",
       address: "654 Paws Road, Suburbia",
       deal: false,
@@ -120,8 +120,8 @@ const initialBusinesses = [
       name: "Starlight Cinema",
       category: "Entertainment",
       image: categoryImages['Entertainment'] || italianKitchen,
-      rating: 4.6,
-      reviews: 210,
+      rating: 5.0,
+      reviews: 0,
       description: "Independent movie theater showing classic and indie films.",
       address: "987 Film Blvd, Arts District",
       deal: true,
@@ -133,8 +133,8 @@ const initialBusinesses = [
       name: "Bloom & Grow Florist",
       category: "Florist",
       image: categoryImages['Florist'] || bookshopImage,
-      rating: 4.9,
-      reviews: 122,
+      rating: 5.0,
+      reviews: 0,
       description: "Fresh floral arrangements and plant care advice.",
       address: "258 Blossom Lane, Garden District",
       deal: false,
@@ -146,8 +146,8 @@ const initialBusinesses = [
       name: "Techie Toys",
       category: "Electronics",
       image: categoryImages['Electronics'] || zenSpa,
-      rating: 4.4,
-      reviews: 98,
+      rating: 5.0,
+      reviews: 0,
       description: "Gadgets and gizmos for tech enthusiasts.",
       address: "147 Silicon Street, Tech Park",
       deal: true,
@@ -160,8 +160,8 @@ const initialBusinesses = [
       name: "Sunrise Bakery",
       category: "Bakery",
       image: categoryImages['Bakery'] || cafeImage,
-      rating: 4.7,
-      reviews: 64,
+      rating: 5.0,
+      reviews: 0,
       description: "Artisan breads and pastries baked fresh every morning.",
       address: "159 Dough Lane, Market Square",
       deal: false,
@@ -173,8 +173,8 @@ const initialBusinesses = [
       name: "Chic Boutique",
       category: "Boutique",
       image: categoryImages['Boutique'] || bookshopImage,
-      rating: 4.5,
-      reviews: 45,
+      rating: 5.0,
+      reviews: 0,
       description: "Curated fashion and home goods from local designers.",
       address: "753 Fashion Ave, Uptown",
       deal: false,
@@ -186,8 +186,8 @@ const initialBusinesses = [
       name: "Canvas & Colors Art Gallery",
       category: "Art Gallery",
       image: categoryImages['Art Gallery'] || zenSpa,
-      rating: 4.8,
-      reviews: 98,
+      rating: 5.0,
+      reviews: 0,
       description: "Contemporary art exhibitions and workshops.",
       address: "321 Gallery Row, Arts District",
       deal: true,
@@ -196,7 +196,15 @@ const initialBusinesses = [
     }
   ];
 
-function Buisnesslist() {
+function Buisnesslist({ token, username, onRequestAuth, searchQuery = '' }) {
+  const apiBase = import.meta.env.VITE_API_BASE || '';
+  
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    window.location.reload();
+  };
+  
   // state for filters
   const [selectedCategory, setSelectedCategory] = React.useState('All');
   // state for sorting dropdown
@@ -211,9 +219,26 @@ function Buisnesslist() {
       try {
         const res = await fetch(apiBase + '/api/businesses');
         if (res.ok) {
-          const list = await res.json();
+          let list = await res.json();
+          // map images based on category for businesses loaded from database
+          list = list.map(biz => ({
+            ...biz,
+            image: categoryImages[biz.category] || italianKitchen
+          }));
           if (list.length > 0) {
             setBusinesses(list);
+            // fetch review counts for all businesses
+            for (const biz of list) {
+              try {
+                const reviewRes = await fetch(apiBase + `/api/reviews/${biz.id}`);
+                if (reviewRes.ok) {
+                  const reviews = await reviewRes.json();
+                  setReviewsById(prev => ({ ...prev, [biz.id]: reviews }));
+                }
+              } catch (err) {
+                console.error(`failed to fetch reviews for business ${biz.id}`, err);
+              }
+            }
           } else {
             // seed data
             await fetch(apiBase + '/api/businesses/seed', {
@@ -242,6 +267,16 @@ function Buisnesslist() {
   // filter businesses according to selectedCategory
   const filtered = React.useMemo(() => {
     let list = businesses;
+    
+    // filter by search query (name or category)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      list = list.filter(b => 
+        b.name.toLowerCase().includes(query) || 
+        b.category.toLowerCase().includes(query)
+      );
+    }
+    
     if (selectedCategory !== 'All') {
       list = list.filter(b => b.category === selectedCategory);
     }
@@ -260,7 +295,7 @@ function Buisnesslist() {
     }
 
     return list;
-  }, [selectedCategory, sortBy, businesses]);
+  }, [selectedCategory, sortBy, businesses, searchQuery]);
 
   const renderStars = (rating) => {
     return (
@@ -272,6 +307,13 @@ function Buisnesslist() {
         ))}
       </div>
     )
+  }
+
+  const calculateAverageRating = (bizId) => {
+    const reviews = reviewsById[bizId] || [];
+    if (reviews.length === 0) return 5.0;
+    const total = reviews.reduce((sum, r) => sum + (r.rating || 5), 0);
+    return (total / reviews.length).toFixed(1);
   }
 
   const [selectedBusiness, setSelectedBusiness] = React.useState(null);
@@ -291,7 +333,7 @@ function Buisnesslist() {
     }
   };
 
-  const addReview = async (bizId, review) => {
+  const addReview = async (bizId, text, rating = 5) => {
     if (token) {
       try {
         const res = await fetch(apiBase + '/api/reviews', {
@@ -300,7 +342,7 @@ function Buisnesslist() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({ businessId: bizId, text: review.text })
+          body: JSON.stringify({ businessId: bizId, text, rating })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'failed to save');
@@ -309,8 +351,6 @@ function Buisnesslist() {
           const existing = prev[bizId] || [];
           return { ...prev, [bizId]: [...existing, data.review] };
         });
-        const biz = businesses.find(b => b.id === bizId);
-        if (biz) biz.reviews += 1;
       } catch (err) {
         console.error(err);
       }
@@ -318,10 +358,8 @@ function Buisnesslist() {
       // fallback local
       setReviewsById(prev => {
         const existing = prev[bizId] || [];
-        return { ...prev, [bizId]: [...existing, review] };
+        return { ...prev, [bizId]: [...existing, { text, rating, author: 'Anonymous' }] };
       });
-      const biz = businesses.find(b => b.id === bizId);
-      if (biz) biz.reviews += 1;
     }
   };
 
@@ -342,6 +380,7 @@ function Buisnesslist() {
   if (selectedBusiness) {
     const biz = selectedBusiness;
     const bizReviews = reviewsById[biz.id] || [];
+    const avgRating = calculateAverageRating(biz.id);
 
     return (
       <section className="business-detail-section">
@@ -349,9 +388,9 @@ function Buisnesslist() {
         <div className="business-detail-card">
           <h2>{biz.name}</h2>
           <div className="rating-section">
-            {renderStars(biz.rating)}
-            <span className="rating-number">{biz.rating}</span>
-            <span className="review-count">({biz.reviews} reviews)</span>
+            {renderStars(avgRating)}
+            <span className="rating-number">{avgRating}</span>
+            <span className="review-count">({bizReviews.length} reviews)</span>
           </div>
           <p>{biz.description}</p>
           <div className="business-address">
@@ -380,8 +419,8 @@ function Buisnesslist() {
                   <button onClick={logout}>Sign Out</button>
                 </div>
                 <ReviewForm
-                  onSubmit={text => {
-                    addReview(biz.id, { text, date: new Date().toISOString(), author: username });
+                  onSubmit={(text, rating) => {
+                    addReview(biz.id, text, rating);
                   }}
                 />
               </>
@@ -390,6 +429,13 @@ function Buisnesslist() {
               {bizReviews.map((r, idx) => (
                 <li key={idx} className="review-item">
                   <div className="review-author">{r.author}</div>
+                  <div className="review-rating">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className={i < (r.rating || 5) ? 'star filled' : 'star'}>
+                        ★
+                      </span>
+                    ))}
+                  </div>
                   <div className="review-text">{r.text}</div>
                 </li>
               ))}
@@ -426,7 +472,10 @@ function Buisnesslist() {
         </div>
 
         <div className="businesses-grid">
-          {filtered.map((business) => (
+          {filtered.map((business) => {
+            const reviewCount = reviewsById[business.id]?.length || 0;
+            const avgRating = calculateAverageRating(business.id);
+            return (
 <div key={business.id} className="business-card" onClick={() => handleCardClick(business)}>
               <div className="card-image-container">
                 <img src={business.image} alt={business.name} className="card-image" />
@@ -441,9 +490,9 @@ function Buisnesslist() {
                 <h3 className="business-name">{business.name}</h3>
 
                 <div className="rating-section">
-                  {renderStars(business.rating)}
-                  <span className="rating-number">{business.rating}</span>
-                  <span className="review-count">({business.reviews} reviews)</span>
+                  {renderStars(avgRating)}
+                  <span className="rating-number">{avgRating}</span>
+                  <span className="review-count">({reviewCount} reviews)</span>
                 </div>
 
                 <p className="business-description">{business.description}</p>
@@ -454,7 +503,8 @@ function Buisnesslist() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -464,17 +514,35 @@ function Buisnesslist() {
 // small component for review submission
 function ReviewForm({ onSubmit }) {
   const [text, setText] = React.useState('');
+  const [rating, setRating] = React.useState(5);
+  const renderRatingStars = (currentRating, setCurrentRating) => (
+    <div className="stars" style={{ cursor: 'pointer' }}>
+      {[...Array(5)].map((_, i) => (
+        <span 
+          key={i} 
+          className={i < currentRating ? 'star filled' : 'star'}
+          onClick={() => setCurrentRating(i + 1)}
+          style={{ fontSize: '1.5em' }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
   return (
     <form
       className="review-form"
       onSubmit={e => {
         e.preventDefault();
         if (text.trim()) {
-          onSubmit(text.trim());
+          onSubmit(text.trim(), rating);
           setText('');
+          setRating(5);
         }
       }}
     >
+      <label>Rating:</label>
+      {renderRatingStars(rating, setRating)}
       <textarea
         value={text}
         onChange={e => setText(e.target.value)}

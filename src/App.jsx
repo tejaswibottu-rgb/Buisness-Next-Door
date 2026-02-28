@@ -17,6 +17,9 @@ function App() {
   const [authError, setAuthError] = React.useState(null);
   const [authModal, setAuthModal] = React.useState(null); // 'login' | 'register' | null
 
+  // search state
+  const [searchQuery, setSearchQuery] = React.useState('');
+
   const apiBase = import.meta.env.VITE_API_BASE || '';
 
   const loginUser = async (user, pass) => {
@@ -85,8 +88,13 @@ function App() {
       />
 
       <main className="main-content">
-        <Hero />
-        <Buisnesslist token={token} username={username} onRequestAuth={mode => setAuthModal(mode)} />
+        <Hero onSearch={setSearchQuery} />
+        <Buisnesslist 
+          token={token} 
+          username={username} 
+          onRequestAuth={mode => setAuthModal(mode)} 
+          searchQuery={searchQuery}
+        />
       </main>
 
       <Footer />

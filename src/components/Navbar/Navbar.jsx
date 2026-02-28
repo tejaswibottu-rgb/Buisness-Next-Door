@@ -5,8 +5,8 @@ function Navbar(props) {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <span className="brand-logo">L</span>
-        <span className="brand-name">LocalBoost</span>
+        <span className="brand-logo">B</span>
+        <span className="brand-name">BuisnessNextDoor</span>
       </div>
       <ul className="Nav-links">
         <li><a href="#">Discover</a></li>
